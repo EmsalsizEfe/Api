@@ -4,8 +4,11 @@ import base_urls.GoRestBaseUrl;
 import io.restassured.response.Response;
 import org.junit.Test;
 
+import java.util.List;
+
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertTrue;
 
 public class Get11 extends GoRestBaseUrl {
     /*
@@ -52,10 +55,24 @@ public class Get11 extends GoRestBaseUrl {
 
         //Kadın ve erkek sayılarını karşılaştıralım.
         //1. Yol:
+        List<String> genders = response.jsonPath().getList("data.gender");
+        System.out.println(genders);
 
+        int kadinSayisi = 0;
+        for(String w : genders){
+            if(w.equalsIgnoreCase("female")){
+                kadinSayisi++;
+            }
+        }
+        assertTrue(kadinSayisi<=genders.size()-kadinSayisi);
 
+        //2. Yol: Kadın ve erkek sayılarını Groovy ile bulalım.
+        List<String> femaleNames = response.jsonPath().getList("data.findAll{it.gender=='female'}.name");
+        System.out.println("femaleNames = " + femaleNames);
+        List<String> maleNames = response.jsonPath().getList("data.findAll{it.gender=='male'}.name");
+        System.out.println("maleNames = " + maleNames);
 
-
+        assertTrue(femaleNames.size()<=maleNames.size());
 
     }
 }
